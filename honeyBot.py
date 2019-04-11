@@ -9,7 +9,8 @@ import RPi.GPIO as GPIO
 import time
 import argparse
 import logging
-#import requests
+import requests
+import paho.mqtt.publish as pub
 
 parser = argparse.ArgumentParser(description='HoneyBot Log Monitor')
 parser.add_argument('--pid', help="Create a pid file in /var/run/honeyBotMon.pid",  action="store_true")
@@ -51,6 +52,9 @@ def setPin(humanPin):
 	
 	return relay
 
+def sendAlert(server, message):
+	pub.single('honeyBot/IP', message, hostname=server)
+	
 relay=setPin(args.relay)
 
 #open SSH failure log
@@ -59,7 +63,7 @@ sshFile.seek(0,2)
 #open iptables log
 iptablesFile=open("/var/log/iptables.log")
 iptablesFile.seek(0,2)
-#Cerate an empty dictionary for 
+#Cerate an empty dictionary for IPs
 srcIPs={}
 
 while(1):
@@ -67,28 +71,31 @@ while(1):
 	line=sshFile.readline()
 	if line:
 		if "sshd" in line and "closed" in line and "preauth" in line:
+			srcIP=line.split()[8]
+			print(srcIP)
 			raiseAlert(relay)
+			sendAlert(args.server, srcIP)
 
-	ipLine=iptablesFile.readline()
-	if ipLine:
-		lineData=ipLine.split()
-		#read UDP
-		if len(lineData) == 22:
-			srcIP=lineData[11].split('=')[1]
-			dPort=lineData[20].split('=')[1]
-		#read TCP 	
-		if len(lineData) == 26:
-			srcIP=lineData[11].split('=')[1]
-			dPort=lineData[21].split('=')[1]
+	line=iptablesFile.readline()
+	if line:
+		if "UDP" in line or "TCP" in line:
+			for words in line.split():
+				if "SRC" in words: 
+					srcIP=words.split('=')[1]
+				if "DPT" in words:
+					dPort=words.split('=')[1]
 			
-		#count the number of ports keyed by src IP
-		if srcIP:
-			if srcIP not in srcIPs:
-				srcIPs[srcIP] = 1 
-			else:
-				srcIPs[srcIP] += 1 
+			#count the number of ports keyed by src IP
+			if srcIP:
+				print("srcIP: {} dPort {}".format(srcIP, dPort))
+				if srcIP not in srcIPs:
+					srcIPs[srcIP] = 1 
+				else:
+					srcIPs[srcIP] += 1 
 
-			if srcIPs[srcIP] == 4: 
-				raiseAlert(relay)	
-				srcIPs[srcIP] = 0 
-				srcIP = None
+				if srcIPs[srcIP] == 4: 
+					print("alert")
+					raiseAlert(relay)	
+					sendAlert(args.server, srcIP)
+					srcIPs[srcIP] = 0 
+					srcIP = None
