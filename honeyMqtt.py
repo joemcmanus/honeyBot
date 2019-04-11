@@ -11,6 +11,7 @@ import datetime
 
 parser = argparse.ArgumentParser(description='HoneyMQTT Event Monitor')
 parser.add_argument('--pid', help="Create a pid file in /var/run/honeyMqtt.pid",  action="store_true")
+parser.add_argument('--dbPath', help="Create a sqlite db file in specified path, defaults to pwd", action="store")
 
 args=parser.parse_args()
 
@@ -30,8 +31,12 @@ def on_message(mosq, userdata, msg):
 	db.commit()
 	
 	
+if args.dbPath: 
+	dbFile=args.dbPath + "/honeyBot.sql3"
+else:
+	dbFile='honeyBot.sql3'
 
-db = sqlite3.connect('honeyBot.sql3')
+db = sqlite3.connect(dbFile)
 db.row_factory = sqlite3.Row
 
 
