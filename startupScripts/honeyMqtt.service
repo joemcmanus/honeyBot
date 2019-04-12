@@ -1,0 +1,20 @@
+#Startup file for the website
+#Put file in /lib/systemd/system
+#run systemctl enable honeyMqtt.service 
+
+[Unit]
+Description=MQTT Listener for HoneyMqtt
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/honeyMqtt.pid
+WorkingDirectory=/var/honeyBot/
+ExecStart=/usr/sbin/daemonize /var/honeyBot/honeyMqtt.py  --pid
+RestartSec=30s
+Restart=always
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

@@ -1,0 +1,20 @@
+#Startup file for the website
+#Put file in /lib/systemd/system
+#run systemctl enable honeyBotMon.service 
+
+[Unit]
+Description=Log file monitor for HoneyBot
+After=network.target
+
+[Service]
+Type=forking
+PIDFile=/var/run/honeyBotMon.pid
+WorkingDirectory=/var/honeyBot/
+ExecStart=/usr/sbin/daemonize /var/honeyBot/honeyBotMon.py  --pid
+RestartSec=30s
+Restart=always
+ExecReload=/bin/kill -s HUP $MAINPID
+ExecStop=/bin/kill -s TERM $MAINPID
+
+[Install]
+WantedBy=multi-user.target

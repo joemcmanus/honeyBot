@@ -21,10 +21,11 @@ import argparse
 import paho.mqtt.client as paho
 import sqlite3
 import datetime
+import os
 
 parser = argparse.ArgumentParser(description='HoneyMQTT Event Monitor')
 parser.add_argument('--pid', help="Create a pid file in /var/run/honeyMqtt.pid",  action="store_true")
-parser.add_argument('--dbPath', help="Create a sqlite db file in specified path, defaults to pwd", action="store")
+parser.add_argument('--dbPath', help="Create a sqlite db file in specified path, defaults to /var/honeyBot", action="store")
 
 args=parser.parse_args()
 
@@ -47,7 +48,7 @@ def on_message(mosq, userdata, msg):
 if args.dbPath: 
 	dbFile=args.dbPath + "/honeyBot.sql3"
 else:
-	dbFile='honeyBot.sql3'
+	dbFile='/var/honeyBot/honeyBot.sql3'
 
 db = sqlite3.connect(dbFile)
 db.row_factory = sqlite3.Row

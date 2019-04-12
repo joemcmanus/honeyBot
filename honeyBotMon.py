@@ -1,5 +1,5 @@
 #!/usr/bin/python3
-# File    : honeyBot.py - A script to alert on portscans and more
+# File    : honeyBotMon.py - A script to alert on portscans and more
 # Author  : Joe McManus josephmc@alumni.cmu.edu
 # Version : 0.1 04/01/2019
 # Copyright (C) 2019 Joe McManus
@@ -24,6 +24,7 @@ import argparse
 import logging
 import requests
 import paho.mqtt.publish as pub
+import os
 
 parser = argparse.ArgumentParser(description='HoneyBot Log Monitor')
 parser.add_argument('--pid', help="Create a pid file in /var/run/honeyBotMon.pid",  action="store_true")

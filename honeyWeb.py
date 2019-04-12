@@ -20,23 +20,25 @@
 
 import argparse
 import sqlite3
+import os
+from geolite2 import geolite2
 
 parser = argparse.ArgumentParser(description='HoneyWeb HoneyBot Web Front End')
 parser.add_argument('--pid', help="Create a pid file in /var/run/honeyMqtt.pid",  action="store_true")
-parser.add_argument('--dbPath', help=" Location of honeyBot.sql3 sqlite db file, defaults to pwd", action="store")
+parser.add_argument('--dbPath', help=" Location of honeyBot.sql3 sqlite db file, defaults to /var/honeyBot", action="store")
 parser.add_argument('--host', help="IP to listen on, defaults to 0.0.0.0", default='0.0.0.0',  action="store")
 
 args=parser.parse_args()
 if args.dbPath: 
 	dbFile=args.dbPath + "/honeyBot.sql3"
 else:
-	dbFile='honeyBot.sql3'
-
+	dbFile='/var/honeyBot/honeyBot.sql3'
 
 if args.pid:
 	fh=open("/var/run/honeyWeb.pid", "w")
 	fh.write(str(os.getpid()))
 	fh.close()
+
 
 try:
 	from flask import Flask, render_template, Markup, request, redirect, make_response, send_file
@@ -47,21 +49,33 @@ app = Flask(__name__)
 
 @app.route('/')
 def index():
+	reader = geolite2.reader()
 	db = sqlite3.connect(dbFile)
 	cursor=db.cursor()
-	query='select ip, dateStamp from honeyLog'
-	cursor.execute(query)
-	results=''
-	rows=cursor.fetchall()
-	for row in rows:
-		results=results +  Markup("\n" +row[0] + " " + row[1] + "<br>")
 	query='select count(ip), ip from honeyLog group by ip'
 	cursor.execute(query)
+	bodyText=Markup('''<center><h3 class="panel-title"> HoneyBot Activity </h3</div>
+		<table> <tr colspan=3> 
+			<td bgcolor=black>><font color=white><b>Count</b></font></td>
+			<td bgcolor=black>><font color=white><b>IP</b></font></td>
+			<td bgcolor=black>><font color=white><b>Location</b></font></td>
+			</tr>''')
 	rows=cursor.fetchall()
+	results=''
 	for row in rows:
-		results=results + Markup( "\n" +str(row[0]) + " " + row[1]+ "<br>" )
+		ip=row[1]
+		count=str(row[0])
+		match = reader.get(ip)
+		if match:
+			try:
+				country=match['country']['names']['en']
+			except:
+				country="unknown"
+		else:
+			country="unknown"
 	
-	bodyText=results 
+		results=results+ Markup('<tr> <td> ' + count + '</td> <td> ' + ip + '</td><td> ' + country + '</td></tr>\n')
+	bodyText=bodyText + results + Markup("</table> </center>")
 	return render_template('template.html', bodyText=bodyText)
 
 if __name__ == '__main__':
