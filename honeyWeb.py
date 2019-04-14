@@ -52,10 +52,9 @@ def index():
 	reader = geolite2.reader()
 	db = sqlite3.connect(dbFile)
 	cursor=db.cursor()
-	query='select count(ip), ip from honeyLog group by ip'
+	query='select count(ip)as ipCount , ip from honeyLog group by ip order by ipCount desc'
 	cursor.execute(query)
-	bodyText=Markup('''<center><h3 class="panel-title"> HoneyBot Activity </h3</div>
-		<table> <tr colspan=3> 
+	bodyText=Markup(''' <center> <table> <tr colspan=3 callpadding=2> 
 			<td bgcolor=black>><font color=white><b>Count</b></font></td>
 			<td bgcolor=black>><font color=white><b>IP</b></font></td>
 			<td bgcolor=black>><font color=white><b>Location</b></font></td>
@@ -75,8 +74,18 @@ def index():
 			country="unknown"
 	
 		results=results+ Markup('<tr> <td> ' + count + '</td> <td> ' + ip + '</td><td> ' + country + '</td></tr>\n')
+	titleText="HoneyBot Attacks"
 	bodyText=bodyText + results + Markup("</table> </center>")
-	return render_template('template.html', bodyText=bodyText)
+	return render_template('template.html', bodyText=bodyText, titleText=titleText)
+
+@app.route('/about')
+def about():
+	titleText="About"
+	bodyText=Markup('''This application is a fun way to visulize network attacks in the real world.
+	<br>
+	Written by Joe McManus josephmc@alumni.cmu.edu and released under the GPL. Copywrite Joe McManus 2019 <br>
+	''')
+	return render_template('template.html', bodyText=bodyText, titleText=titleText)
 
 if __name__ == '__main__':
 	app.run(host=args.host, port=443, ssl_context = 'adhoc')
