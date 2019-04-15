@@ -60,7 +60,7 @@ Copy the files from the repo in to /var/honeyBoy. Then move the startup scripts 
 #Modular
 You can deploy this on multiple systems as it was desinged to be modular. 
 
-![](https://raw.githubusercontent.com/joemcmanus/honeyBot/master/img/honeyBot.png)
+![](https://raw.githubusercontent.com/joemcmanus/honeyBot/master/img/honeyBot.jpg)
 
 #honeyBotMon.py 
 
