@@ -104,8 +104,6 @@ You can deploy this on multiple systems as it was desinged to be modular.
       --relay RELAY    Which relay to activate, default 1
       --delay DELAY    Number of seconds to wait between readings, default 1
 
-![](https://raw.githubusercontent.com/joemcmanus/honeyBot/master/img/dashboard.png)
-
 #Parts
 I used a regular RPi and a Pi Relay Hat from Amazon: 
 https://www.amazon.com/Raspberry-Pi-Expansion-Module-XYGStudy/dp/B01G05KLIE/
