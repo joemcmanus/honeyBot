@@ -22,6 +22,8 @@ import paho.mqtt.client as paho
 import sqlite3
 import datetime
 import os
+from geolite2 import geolite2
+reader = geolite2.reader()
 
 parser = argparse.ArgumentParser(description='HoneyMQTT Event Monitor')
 parser.add_argument('--pid', help="Create a pid file in /var/run/honeyMqtt.pid",  action="store_true")
@@ -34,12 +36,26 @@ if args.pid:
 	fh.write(str(os.getpid()))
 	fh.close()
 
+def getLocation(ip):
+	match = reader.get(ip)
+	if match:
+		try:
+			country=match['country']['names']['en']
+		except:
+			country="unknown"
+	else:
+		country="unknown"
+	return country
+
 
 def on_message(mosq, userdata, msg):
 	print(msg.payload.decode("utf-8"))
 	now=datetime.datetime.now()
-	t=(msg.payload.decode("utf-8"),now,)
-	query='insert into honeyLog(ip, dateStamp) values(?,?)'
+	ip=msg.payload.decode("utf-8")
+	country=getLocation(ip)
+	print(country)
+	t=(ip,now,country,)
+	query='insert into honeyLog(ip, dateStamp, country) values(?,?,?)'
 	cursor=db.cursor()
 	cursor.execute(query, t)
 	db.commit()
