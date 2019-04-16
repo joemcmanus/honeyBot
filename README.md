@@ -57,12 +57,12 @@ Copy the files from the repo in to /var/honeyBoy. Then move the startup scripts 
     systemctl enable honeyWeb.service
 
 
-#Modular
+# Modular
 You can deploy this on multiple systems as it was desinged to be modular. 
 
 ![](https://raw.githubusercontent.com/joemcmanus/honeyBot/master/img/honeyBot.jpg)
 
-#honeyBotMon.py 
+# honeyBotMon.py 
 
     usage: honeyBotMon.py [-h] [--pid] [--server SERVER] [--log] [--relay RELAY]
                           [--delay DELAY]
@@ -77,7 +77,7 @@ You can deploy this on multiple systems as it was desinged to be modular.
       --relay RELAY    Which relay to activate, default 1
       --delay DELAY    Number of seconds to wait between readings, default 1
 
-#honeyMqtt.py 
+# honeyMqtt.py 
 
     usage: honeyMqtt.py [-h] [--pid] [--dbPath DBPATH]
     
@@ -89,7 +89,7 @@ You can deploy this on multiple systems as it was desinged to be modular.
       --dbPath DBPATH  Create a sqlite db file in specified path, defaults to
                        /var/honeyBot
 
-#honeyWeb.py 
+# honeyWeb.py 
 
     usage: honeyBotMon.py [-h] [--pid] [--server SERVER] [--log] [--relay RELAY]
                           [--delay DELAY]
@@ -104,7 +104,7 @@ You can deploy this on multiple systems as it was desinged to be modular.
       --relay RELAY    Which relay to activate, default 1
       --delay DELAY    Number of seconds to wait between readings, default 1
 
-#Parts
+# Parts
 I used a regular RPi and a Pi Relay Hat from Amazon: 
 https://www.amazon.com/Raspberry-Pi-Expansion-Module-XYGStudy/dp/B01G05KLIE/
 
