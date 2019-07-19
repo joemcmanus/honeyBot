@@ -2,7 +2,7 @@
 # honeyBot
 A set of tools for creating a honeypot that alerts in the real world .
 
-![](https://raw.githubusercontent.com/joemcmanus/honeyBot/master/img/light.jpg)
+![](https://raw.githubusercontent.com/joemcmanus/honeyBot/master/img/light.png)
 
 # Setup
 This is designed around a RaspberryPi using a PiRelay Hat to raise a physical alarm. 
